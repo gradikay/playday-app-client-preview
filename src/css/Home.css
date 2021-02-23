@@ -6,20 +6,11 @@
     background-size: cover;
     background-attachment: fixed;
     background-color:black;
-}
-
-#Home #Header h1 {
-    font-size: 3.5rem;
-    text-shadow: 0 0 20px black;
-}
-
-#Home #SectionA h3 {
-    font-size: 3.5rem;
+    background-position-y: center;
 }
 
 #Home #Header p {
-    font-size: 1.5rem;
-    text-shadow: 0 0 20px black;
+    font-size: 1.5rem; 
 }
 
 #Home .card .overlay-bottom{

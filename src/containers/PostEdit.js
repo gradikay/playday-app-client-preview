@@ -1,15 +1,10 @@
 // This file is exported to ---> src/Routes.js
 // React required
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-// uuid for Unique Ids
-// Amplify required
-import { API } from "aws-amplify";
+import { Link, useParams } from "react-router-dom"; 
 // Components
 import LoaderButton from "../components/LoaderButton";
-import { S3Image } from 'aws-amplify-react'; 
-// Libs
-import { Storage } from "aws-amplify";
+import image2 from "../img/img1.jpg" 
 // -------------- Application Begins Bellow ------------ //
 
 // Main Application
@@ -19,27 +14,28 @@ export default function PostEdit() {
     const { id } = useParams();
     const [isDeleting, setIsDeleting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    // Seller
+    const [userFirstName, setUserFirstName] = useState("")
+    const [userLastName, setUserLastName] = useState("")
     // Post Description
     const [postStatus, setPostStatus] = useState("");
-    const [postType, setPostType ] = useState("");
-    const [postStyle, setPostStyle] = useState("");
-    const [postPrice, setPostPrice] = useState(10);
-    const [postAcreage, setPostAcreage] = useState(1);
-    const [numberOfBaths, setNumberOfBaths] = useState(1);
-    const [numberOfBedrooms, setNumberOfBedrooms] = useState(1);
-    const [postDescription, setPostDescription] = useState("");
-    // Seller Information
+    const [promotion, setPromotion] = useState("");
+    const [vehicleModal, setVehicleModal] = useState("");
+    const [vehicleMake, setVehicleMake] = useState("");
+    const [vehicleYear, setVehicleYear] = useState(2021);
+    const [vehiclePrice, setVehiclePrice] = useState(35000);
+    const [vehicleMileage, setVehicleMileage] = useState(40000);
+    const [milesPerGallon, setMilesPerGallon] = useState("");
+    const [bodyStyle, setBodyStyle] = useState("");
+    const [engineType, setEngineType] = useState("");
+    const [interiorColor, setInteriorColor] = useState("");
+    const [drivetrain, setDrivetrain] = useState("");
+    const [numberOfKeys, setNumberOfKeys] = useState(2);
+    const [exteriorColor, setExteriorColor] = useState("");
+    const [transmission, setTransmission] = useState("");
+    const [doors, setDoors] = useState("");
+    const [vin, setVin] = useState("");
     const [userId, setUserId] = useState("");
-    const [sellerFirstName, setSellerFirstName] = useState("");
-    const [sellerLastName, setSellerLastName] = useState("");
-    const [sellerPhoneNumber, setSellerPhoneNumber] = useState(99999999);
-    // Post Location
-    const [streetAddress, setStreetAddress] = useState("");
-    const [streetAddressLine2, setStreetAddressLine2] = useState("");
-    const [streetCity, setStreetCity] = useState("");
-    const [streetState, setStreetState] = useState("");
-    const [streetCountry, setStreetCountry] = useState("");
-    const [streetZipcode, setStreetZipcode] = useState(0);
     // display the image
     const [image1, setImage1] = useState(null);
     const [image2, setImage2] = useState(null);
@@ -51,51 +47,35 @@ export default function PostEdit() {
     useEffect(() => {
 
         // Cleanup variable
-        let unmounted = false;
-
-        // Loading post from Dynamodb
-        function loadPost() {
-            return API.get("posts", `/posts/${id}`);
-        }
+        let unmounted = false; 
 
         async function onLoad() {
 
             try {
 
-                if (!unmounted) {
-
+                if (!unmounted) { 
+                    // Seller
+                    setUserFirstName("Gradi");
+                    setUserLastName("Musa");
                     // Important variables
-                    const post = await loadPost();
-                    const { postStatus, postPrice, postType, postStyle, postDescription, userId, postAcreage, numberOfBaths, numberOfBedrooms } = post;
-
-                    const { firstName, lastName, phoneNumber } = post.seller;
-
-                    const { streetZipcode, streetAddress, streetAddressLine2, streetCity, streetState, streetCountry } = post.address;
-
-                    const { image1, image2, image3, image4, image5 } = post.images;
-
-                    // Important variables
-                    // Post Description
-                    setPostType(postType);
-                    setPostStyle(postStyle);
-                    setPostPrice(postPrice);
-                    setPostStatus(postStatus);
-                    setPostAcreage(postAcreage);
-                    setNumberOfBaths(numberOfBaths);
-                    setNumberOfBedrooms(numberOfBedrooms);
-                    // Seller Information
+                    setPostStatus("sold");
+                    setPromotion("free shippin");
+                    setVehicleModal("gls");
+                    setVehicleMake("mercedes");
+                    setVehicleYear(2021);
+                    setVehiclePrice(119000);
+                    setVehicleMileage(10000);
+                    setMilesPerGallon("25/54 mpg");
+                    setBodyStyle("sedan");
+                    setEngineType("fwd");
+                    setInteriorColor("black");
+                    setDrivetrain("2.4l");
+                    setNumberOfKeys(2);
+                    setExteriorColor("brown");
+                    setTransmission("automatic");
+                    setDoors(2);
+                    setVin("22354566666");
                     setUserId(userId);
-                    setSellerLastName(lastName);
-                    setSellerFirstName(firstName);
-                    setSellerPhoneNumber(phoneNumber);
-                    // Post Location
-                    setStreetCity(streetCity);
-                    setStreetState(streetState);
-                    setStreetCountry(streetCountry);
-                    setStreetAddress(streetAddress);
-                    setStreetZipcode(streetZipcode);
-                    setPostDescription(postDescription);
-                    setStreetAddressLine2(streetAddressLine2);
                     // Images
                     setImage1(image1);
                     setImage2(image2);
@@ -123,8 +103,7 @@ export default function PostEdit() {
     // Validation and Loading
     function validateForm() {
         return (
-            postPrice > 0 &&
-            postDescription.length > 0
+            vehiclePrice > 0
         );
     }
 
@@ -135,32 +114,7 @@ export default function PostEdit() {
 
         setIsLoading(true);
 
-        try {
-
-            // Note: making your data lowercase will help with your perform search 
-            // on your dynamodb table -- use .toLowerCase()
-            // Dynamodb is case sensitive. Example: a user searching for "Home" in the search bar
-            // will only get results for "Home" not "HOME", "home", or any other combination
-            await updatePost({
-                // Post Description 
-                postStatus: postStatus.toLowerCase(),
-                postType: postType.toLowerCase(),
-                postStyle: postStyle.toLowerCase(),
-                postPrice: Number(postPrice),
-                postAcreage: Number(postAcreage),
-                numberOfBaths: numberOfBaths,
-                numberOfBedrooms: numberOfBedrooms,
-                postDescription: postDescription,
-                // Seller Informations 
-                sellerPhoneNumber: sellerPhoneNumber,
-                // Post Location
-                streetCity: streetCity.toLowerCase(),
-                streetState: streetState.toLowerCase(),
-                streetCountry: streetCountry.toLowerCase(),
-                streetZipcode: streetZipcode,
-                streetAddress: streetAddress.toLowerCase(),
-                streetAddressLine2: streetAddress.toLowerCase(),
-            });
+        try { 
 
             // Redirect us to dashboard after update is complete
             window.location.href = `/dashboard`;
@@ -170,41 +124,28 @@ export default function PostEdit() {
             setIsLoading(false);
         }
     }
-     
-    // Updating Post
-    function updatePost(post) {
-        return API.put("posts", `/posts/${id}`, {
-            body: post
-        });
-    }
-
-    // Deleting Post
-    function deletePost() {
-        return API.del("posts", `/posts/${id}`);
-    }
-
+       
     // Handling Delete Post
     async function handleDelete(event) {
         event.preventDefault();
 
+        // Window alert confirmation
         const confirmed = window.confirm(
             "Are you sure you want to delete this post?"
         );
 
+        // Return true when user press "ok" to confirm deletion
         if (!confirmed) {
             return;
         }
 
         setIsDeleting(true);
 
-        try {
-            await Storage.remove(image1, { level: 'protected' });
-            await Storage.remove(image2, { level: 'protected' });
-            await Storage.remove(image3, { level: 'protected' });
-            await Storage.remove(image4, { level: 'protected' });
-            await Storage.remove(image5, { level: 'protected' });
-            await deletePost();
+        try { 
+
+            // Redirect to dashboard
             window.location.href = `/dashboard`;
+
         } catch (e) {
             alert(e);
             setIsDeleting(false);
@@ -245,26 +186,27 @@ export default function PostEdit() {
                     handleSubmit={handleSubmit}
                     handleDelete={handleDelete}
                     validateForm={validateForm}
+                    // Seller
+                    userFirstName={userFirstName}
+                    userLastName={userLastName}
                     // Post Description
                     postStatus={postStatus} setPostStatus={setPostStatus}
-                    postType={postType} setPostType={setPostType}
-                    postStyle={postStyle} setPostStyle={setPostStyle}
-                    postPrice={postPrice} setPostPrice={setPostPrice}
-                    postAcreage={postAcreage} setPostAcreage={setPostAcreage}
-                    numberOfBaths={numberOfBaths} setNumberOfBaths={setNumberOfBaths}
-                    numberOfBedrooms={numberOfBedrooms} setNumberOfBedrooms={setNumberOfBedrooms}
-                    postDescription={postDescription} setPostDescription={setPostDescription}
-                    // Seller Information 
-                    sellerFirstName={sellerFirstName}
-                    sellerLastName={sellerLastName}
-                    sellerPhoneNumber={sellerPhoneNumber} setSellerPhoneNumber={setSellerPhoneNumber}
-                    // Post Location
-                    streetAddress={streetAddress} setStreetAddress={setStreetAddress}
-                    streetAddressLine2={streetAddressLine2} setStreetAddressLine2={setStreetAddressLine2}
-                    streetCity={streetCity} setStreetCity={setStreetCity}
-                    streetState={streetState} setStreetState={setStreetState}
-                    streetCountry={streetCountry} setStreetCountry={setStreetCountry}
-                    streetZipcode={streetZipcode} setStreetZipcode={setStreetZipcode}
+                    promotion={promotion} setPromotion={setPromotion}
+                    vehicleModal={vehicleModal} setVehicleModal={setVehicleModal}
+                    vehicleMake={vehicleMake} setVehicleMake={setVehicleMake}
+                    vehicleYear={vehicleYear} setVehicleYear={setVehicleYear}
+                    vehiclePrice={vehiclePrice} setVehiclePrice={setVehiclePrice}
+                    vehicleMileage={vehicleMileage} setVehicleMileage={setVehicleMileage}
+                    milesPerGallon={milesPerGallon} setMilesPerGallon={setMilesPerGallon}
+                    bodyStyle={bodyStyle} setBodyStyle={setBodyStyle}
+                    engineType={engineType} setEngineType={setEngineType}
+                    interiorColor={interiorColor} setInteriorColor={setInteriorColor}
+                    drivetrain={drivetrain} setDrivetrain={setDrivetrain}
+                    numberOfKeys={numberOfKeys} setNumberOfKeys={setNumberOfKeys}
+                    exteriorColor={exteriorColor} setExteriorColor={setExteriorColor}
+                    transmission={transmission} setTransmission={setTransmission}
+                    doors={doors} setDoors={setDoors}
+                    vin={vin} setVin={setVin}
 
                 /> 
                 { /* Post Info - RIGHT Section - End */}
@@ -273,9 +215,10 @@ export default function PostEdit() {
                 <Preview
                     image1={image1} 
                     userId={userId}
-                    postType={postType}
-                    postPrice={postPrice}
-                    postStatus={postStatus}
+                    vehicleModal={vehicleModal}
+                    vehicleMake={vehicleMake}
+                    vehicleYear={vehicleYear}
+                    vehiclePrice={vehiclePrice}
                 />
                 { /* Post Preview - LEFT Section - End */}
 
@@ -305,8 +248,7 @@ function Images(props) {
     // Important variable
     const {
 
-        image1,
-        image2,
+        image1, 
         image3,
         image4,
         image5,
@@ -321,7 +263,7 @@ function Images(props) {
             <div className="col-sm image-container p-0"> 
 
                 <div className="card">
-                    <S3Image level="protected" identityId={userId} imgKey={image1} /> 
+                    <img src={image2} />
                 </div>
                 
             </div>
@@ -331,7 +273,7 @@ function Images(props) {
             <div className="col-sm image1-container p-0">
 
                 <div className="card">
-                    <S3Image level="protected" identityId={userId} imgKey={image2} />
+                    <img src={image2} />
                 </div>
 
             </div>
@@ -341,7 +283,7 @@ function Images(props) {
             <div className="col-sm image1-container p-0">
 
                 <div className="card">
-                    <S3Image level="protected" identityId={userId} imgKey={image3} />
+                    <img src={image2} />
                 </div>
 
             </div>
@@ -351,7 +293,7 @@ function Images(props) {
             <div className="col-sm image1-container p-0">
 
                 <div className="card">
-                    <S3Image level="protected" identityId={userId} imgKey={image4} />
+                    <img src={image2} />
                 </div>
 
             </div>
@@ -361,7 +303,7 @@ function Images(props) {
             <div className="col-sm image1-container p-0">
 
                 <div className="card">
-                    <S3Image level="protected" identityId={userId} imgKey={image5} />
+                    <img src={image2} />
                 </div>
 
             </div>
@@ -381,27 +323,27 @@ function PostInfo(props) {
         handleDelete,
         handleSubmit,
         isDeleting,
-        validateForm,
+        validateForm, 
+        // Seller
+        userFirstName, userLastName,
         // Post Description
         postStatus, setPostStatus,
-        postType, setPostType, 
-        postStyle, setPostStyle,
-        postPrice, setPostPrice,
-        postAcreage, setPostAcreage,
-        numberOfBaths, setNumberOfBaths,
-        numberOfBedrooms, setNumberOfBedrooms,
-        postDescription, setPostDescription,
-        // Seller Information 
-        sellerFirstName,
-        sellerLastName,
-        sellerPhoneNumber, setSellerPhoneNumber,
-        // Post Location
-        streetAddress, setStreetAddress,
-        streetAddressLine2, setStreetAddressLine2,
-        streetCity, setStreetCity,
-        streetState, setStreetState,
-        streetCountry, setStreetCountry,
-        streetZipcode, setStreetZipcode,
+        promotion, setPromotion,
+        vehicleModal, setVehicleModal,
+        vehicleMake, setVehicleMake,
+        vehicleYear, setVehicleYear,
+        vehiclePrice, setVehiclePrice,
+        vehicleMileage, setVehicleMileage,
+        milesPerGallon, setMilesPerGallon,
+        bodyStyle, setBodyStyle,
+        engineType, setEngineType,
+        interiorColor, setInteriorColor,
+        drivetrain, setDrivetrain,
+        numberOfKeys, setNumberOfKeys,
+        exteriorColor, setExteriorColor,
+        transmission, setTransmission,
+        doors, setDoors,
+        vin, setVin,
 
     } = props;
 
@@ -409,17 +351,17 @@ function PostInfo(props) {
     return (
         <div className="col-sm-7 mt-3">
 
-            { /* Organization, Property Address, & Property Information - Start */}
+            { /* Seller, Vehicle Information, & Details - Start */}
             <div className="row">
 
-                { /* Organization & Property Address - Start */}
+                { /* Seller & Vehicle Information - Start */}
                 <div className="col-sm-6 m-0">
 
-                    { /* Organization - Start */}
+                    { /* Seller - Start */}
                     <div className="border p-3 mb-3 shadow-sm ">
 
                         { /* Heading */}
-                        <h3 className="mb-4">Organization</h3>
+                        <h3 className="mb-4">Seller</h3>
 
                         { /* Seller's Name - Start */}
                         <div className="form-group">
@@ -429,181 +371,21 @@ function PostInfo(props) {
                                 type="text"
                                 disabled="disabled"
                                 className="form-control"
-                                value={sellerFirstName + " " + sellerLastName}
+                                value={userFirstName + " " + userLastName}
                             />
                             { /* Helper */}
-                            <small className="text-secondary">Your organization's name can't be changed</small>
+                            <small className="text-secondary">Your Seller's name can't be changed</small>
                         </div>
-                        { /* Seller's Name - End */}
-
-                        { /* Seller's Phone Number - Start */}
-                        <div className="form-group">
-                            <label htmlFor="sellerPhoneNumber" className="color-red">Phone Number</label>
-                            <input
-                                type="tel"
-                                form="form"
-                                required="required"
-                                id="sellerPhoneNumber"
-                                name="sellerPhoneNumber"
-                                className="form-control"
-                                value={sellerPhoneNumber}
-                                placeholder="phone number"
-                                onChange={e => setSellerPhoneNumber(e.target.value)}
-                            />
-                            { /* Helper */}
-                            <small className="text-secondary">Enter your phone number</small>
-
-                        </div>
-                        { /* Seller's Phone Number - End */}
+                        { /* Seller's Name - End */} 
 
                     </div>
-                    { /* Organization - End */}
+                    { /* Seller - End */}
 
-                    { /* Property Address - Start */}
+                    { /* Vehicle Information - Start */}
                     <div className="border p-3 mb-3 shadow-sm ">
 
                         { /* Heading */}
-                        <h3 className="mb-4">Property Address</h3>
-
-                        { /* Address - Start */}
-                        <div className="form-group">
-                            <label htmlFor="streetAddress" className="color-red">Street Address</label>
-                            <input
-                                form="form"
-                                type="text"
-                                id="streetAddress"
-                                required="required"
-                                name="streetAddress"
-                                value={streetAddress}
-                                placeholder="address"
-                                className="form-control"
-                                onChange={e => setStreetAddress(e.target.value)}
-                            />
-                            { /* Helper */}
-                            <small className="text-secondary">Enter your street address</small>
-
-                        </div>
-                        { /* Address - End */}
-
-                        { /* Address Line 2 - Start */}
-                        <div className="form-group">
-                            <label htmlFor="streetAddressLine2" className="color-red">Street Address Line 2</label>
-                            <input
-                                form="form"
-                                type="text"
-                                required="required"
-                                id="streetAddressLine2"
-                                name="streetAddressLine2"
-                                className="form-control"
-                                value={streetAddressLine2}
-                                placeholder="address line 2"
-                                onChange={e => setStreetAddressLine2(e.target.value)}
-                            />
-                            { /* Helper */}
-                            <small className="text-secondary">Enter your street address line 2</small>
-
-                        </div>
-                        { /* Address Line 2 - End */}
-
-                        { /* City - Start */}
-                        <div className="form-group">
-                            <label htmlFor="streetCity" className="color-red">City</label>
-                            <select
-                                from="form"
-                                id="streetCity"
-                                name="streetCity"
-                                value={streetCity}
-                                required="required"
-                                className="form-control"
-                                onChange={e => setStreetCity(e.target.value)}
-                            >
-                                <option value="">Select City</option>
-                                <option value="atlanta">Atlanta</option>
-                                <option value="lithonia">Lithonia</option>
-                                <option value="kinshasa">Kinshasa</option>
-                            </select>
-                            <small className="text-secondary">Enter your organization's city</small>
-
-                        </div>
-                        { /* City - End */}
-
-                        { /* State - Start */}
-                        <div className="form-group ">
-                            <label htmlFor="streetState" className="color-red">State</label>
-                            <select
-                                form="from"
-                                id="streetState"
-                                name="streetState"
-                                value={streetState}
-                                required="required"
-                                className="form-control"
-                                onChange={e => setStreetState(e.target.value)}
-                            >
-                                <option value="">Select State</option>
-                                <option value="georgia">GA</option>
-                                <option value="north carolina">NC</option>
-                                <option value="south carolina">SC</option>
-                            </select>
-                            <small className="text-secondary">Enter your organization's State</small>
-
-
-                        </div>
-                        { /* State - End */}
-
-                        { /* Number of bedrooms - Start */}
-                        <div className="form-group">
-                            <label htmlFor="streetZipcode" className="color-red">Zipcode / Postal</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="streetZipcode"
-                                name="streetZipcode"
-                                value={streetZipcode}
-                                className="form-control"
-                                placeholder="zipcode / postal"
-                                onChange={e => setStreetZipcode(e.target.value)}
-                            />
-                            <small className="text-secondary">Enter the number of bedrooms </small>
-                        </div>
-                        { /* Number of bedrooms - End */}
-
-                        { /* Country - Start */}
-                        <div className="form-group ">
-                            <label htmlFor="streetCountry" className="color-red">Country</label>
-                            <select
-                                form="from"
-                                id="streetCountry"
-                                required="required"
-                                name="streetCountry"
-                                value={streetCountry}
-                                className="form-control"
-                                onChange={e => setStreetCountry(e.target.value)}
-                            >
-                                <option value="">Select Country</option>
-                                <option value="usa">USA</option>
-                                <option value="congo">Congo</option>
-                                <option value="south africa">South Africa</option>
-                            </select>
-                            <small className="text-secondary">Enter your organization's Country</small>
-
-
-                        </div>
-                        { /* Country - End */}
-
-                    </div>
-                    { /* Property Address - End */}
-
-                </div>
-                { /* Organization & Property Address - End */}
-
-                { /* Property Information - Start */}
-                <div className="col-sm-6 m-0">
-
-                    { /* Property Information - Start */}
-                    <div className="border p-3 mb-3 bg-white shadow-sm">
-
-                        { /* Heading */}
-                        <h3 className="mb-4">Property Information</h3>
+                        <h3 className="mb-4">Vehicle Information</h3>
 
                         { /* Status - Start */}
                         <div className="form-group">
@@ -627,150 +409,347 @@ function PostInfo(props) {
                         </div>
                         { /* Status - End */}
 
-                        { /* Type - Start */}
-                        <div className="form-group ">
-                            <label htmlFor="postType" className="color-red">Type</label>
-                            <select
-                                form="form"
-                                id="postType"
-                                name="postType"
-                                value={postType}
-                                required="required"
-                                className="form-control"
-                                onChange={e => setPostType(e.target.value)}
-                            >
-                                <option value="">Select Property Type</option>
-                                <option value="single family">Single Family</option>
-                                <option value="condo">Condo</option>
-                                <option value="apartment">Apartment</option>
-                                <option value="land">Land</option>
-                                <option value="farm">Farm</option>
-                            </select>
-                            <small className="text-secondary">Enter property type</small>
-
-                        </div>
-                        { /* Type - End */}
-
-                        { /* Style - Start */}
-                        <div className="form-group ">
-                            <label htmlFor="postStyle" className="color-red">Style</label>
-                            <select
-                                form="form"
-                                id="postStyle"
-                                name="postStyle"
-                                value={postStyle}
-                                required="required"
-                                className="form-control"
-                                onChange={e => setPostStyle(e.target.value)}
-                            >
-                                <option value="">Select Property Style</option>
-                                <option value="english">English</option>
-                                <option value="spanish">Spanish</option>
-                                <option value="french">French</option>
-                                <option value="traditional">Traditional</option>
-                            </select>
-                            <small className="text-secondary">Enter property style</small>
-
-                        </div>
-                        { /* Style - End */}
-
-                        { /* Price - Start */}
+                        { /* Vin - Start */}
                         <div className="form-group">
-                            <label htmlFor="postPrice" className="color-red">Price</label>
+                            <label htmlFor="vin" className="color-red">Vin</label>
+                            <input
+                                form="form"
+                                type="text"
+                                id="vin"
+                                required="required"
+                                name="vin"
+                                value={vin}
+                                placeholder="vin"
+                                className="form-control"
+                                onChange={e => setVin(e.target.value)}
+                            />
+                            { /* Helper */}
+                            <small className="text-secondary">Enter Vehicle Vin</small>
+
+                        </div>
+                        { /* Vin - End */}
+
+                        { /* Make - Start */}
+                        <div className="form-group">
+                            <label htmlFor="vehicleMake" className="color-red">Make</label>
+                            <select
+                                from="form"
+                                id="vehicleMake"
+                                name="vehicleMake"
+                                value={vehicleMake}
+                                required="required"
+                                className="form-control"
+                                onChange={e => setVehicleMake(e.target.value)}
+                            >
+                                <option value="">Select Make</option>
+                                <option value="mercedes">Mercedes</option>
+                                <option value="ford">Ford</option>
+                                <option value="nissan">Nissan</option>
+                            </select>
+                            <small className="text-secondary">Select vehicle make</small>
+                        </div>
+                        { /* Make - End */}
+
+                        { /* Modal - Start */}
+                        <div className="form-group">
+                            <label htmlFor="vehicleModal" className="color-red">Modal</label>
+                            <input
+                                form="form"
+                                type="text"
+                                required="required"
+                                id="vehicleModal"
+                                name="vehicleModal"
+                                className="form-control"
+                                value={vehicleModal}
+                                placeholder="modal"
+                                onChange={e => setVehicleModal(e.target.value)}
+                            />
+                            { /* Helper */}
+                            <small className="text-secondary">Enter vehicle modal</small>
+
+                        </div>
+                        { /* Modal - End */}
+
+                        { /* Year - Start */}
+                        <div className="form-group">
+                            <label htmlFor="vehicleYear" className="color-red">Year</label>
                             <input
                                 form="form"
                                 type="number"
-                                id="postPrice"
-                                name="postPrice"
-                                value={postPrice}
+                                id="vehicleYear"
+                                name="vehicleYear"
+                                value={vehicleYear}
+                                className="form-control"
+                                onChange={e => setVehicleYear(e.target.value)}
+                                placeholder="year"
+                            />
+                            <small className="text-secondary">Enter vehicle Year </small>
+                        </div>
+                        { /* Year - End */}
+
+                        { /* Mileage - Start */}
+                        <div className="form-group">
+                            <label htmlFor="vehicleMileage" className="color-red">Mileage</label>
+                            <input
+                                form="form"
+                                type="number"
+                                id="vehicleMileage"
+                                name="vehicleMileage"
+                                value={vehicleMileage}
+                                className="form-control"
+                                onChange={e => setVehicleMileage(e.target.value)}
+                                placeholder="mileage"
+                            />
+                            <small className="text-secondary">Enter vehicle Mileage </small>
+                        </div>
+                        { /* Mileage - End */}
+
+                        { /* Promotion - Start */}
+                        <div className="form-group">
+                            <label htmlFor="promotion" className="color-red">promotion</label>
+                            <input
+                                form="form"
+                                type="text"
+                                id="promotion"
+                                required="required"
+                                name="promotion"
+                                value={promotion}
+                                placeholder="promotion"
+                                className="form-control"
+                                onChange={e => setPromotion(e.target.value)}
+                            />
+                            { /* Helper */}
+                            <small className="text-secondary">Enter a short promotion</small>
+
+                        </div>
+                        { /* Promotion - End */}
+
+                        { /* Price - Start */}
+                        <div className="form-group">
+                            <label htmlFor="vehiclePrice" className="color-red">Price</label>
+                            <input
+                                form="form"
+                                type="number"
+                                id="vehiclePrice"
+                                name="vehiclePrice"
+                                value={vehiclePrice}
                                 placeholder="price"
                                 className="form-control"
-                                onChange={e => setPostPrice(e.target.value)}
+                                onChange={e => setVehiclePrice(e.target.value)}
                             />
-                            <small className="text-secondary">Enter the property price </small>
+                            <small className="text-secondary">Enter vehicle price </small>
                         </div>
-                        { /* Price - Start */}
-
-                        { /* Acreage - Start */}
-                        <div className="form-group">
-                            <label htmlFor="postAcreage" className="color-red">Acreage</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="postAcreage"
-                                name="postAcreage"
-                                value={postAcreage}
-                                placeholder="acres"
-                                className="form-control"
-                                onChange={e => setPostAcreage(e.target.value)}
-                            />
-                            <small className="text-secondary">Enter the property price </small>
-                        </div>
-                        { /* Acreage - End */}
-
-                        { /* Number of baths - Start */}
-                        <div className="form-group">
-                            <label htmlFor="numberOfBaths" className="color-red"># of Baths</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="numberOfBaths"
-                                name="numberOfBaths"
-                                value={numberOfBaths}
-                                placeholder="baths"
-                                className="form-control"
-                                onChange={e => setNumberOfBaths(e.target.value)}
-                            />
-                            <small className="text-secondary">Enter the number of bathrooms </small>
-                        </div>
-                        { /* Number of baths - End */}
-
-                        { /* Number of bedrooms - Start */}
-                        <div className="form-group">
-                            <label htmlFor="numberOfBedrooms" className="color-red"># of Bedrooms</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="numberOfBedrooms"
-                                placeholder="bedrooms"
-                                name="numberOfBedrooms"
-                                className="form-control"
-                                value={numberOfBedrooms}
-                                onChange={e => setNumberOfBedrooms(e.target.value)}
-                            />
-                            <small className="text-secondary">Enter the number of bedrooms </small>
-                        </div>
-                        { /* Number of bedrooms - End */}
-
+                        { /* Price - End */} 
 
                     </div>
-                    { /* Property Information - End */}
+                    { /* Vehicle Information - End */}
 
                 </div>
-                { /* Property Information - End */}
+                { /* Seller & Vehicle Information - End */}
+
+                { /* Details - Start */}
+                <div className="col-sm-6 m-0">
+
+                    { /* Details - Start */}
+                    <div className="border p-3 mb-3 bg-white shadow-sm">
+
+                        { /* Heading */}
+                        <h3 className="mb-4">Details</h3>
+
+                        { /* Body Style - Start */}
+                        <div className="form-group ">
+                            <label htmlFor="bodyStyle" className="color-red">Style</label>
+                            <select
+                                form="form"
+                                id="bodyStyle"
+                                name="bodyStyle"
+                                value={bodyStyle}
+                                required="required"
+                                className="form-control"
+                                onChange={e => setBodyStyle(e.target.value)}
+                            >
+                                <option value="">Select Style</option>
+                                <option value="sedan">Sedan</option>
+                                <option value="convertible">Convertible</option>
+                                <option value="pickup">Pickup</option>
+                                <option value="coupe">coupe</option>
+                                <option value="hybrid">Hybrid</option>
+                            </select>
+                            <small className="text-secondary">Select Vehicle Style</small>
+
+                        </div>
+                        { /* Body Style - End */}
+
+                        { /* Interior Color - Start */}
+                        <div className="form-group">
+                            <label htmlFor="interiorColor" className="color-red">Interior</label>
+                            <input
+                                form="form"
+                                type="text"
+                                required="required"
+                                id="interiorColor"
+                                name="interiorColor"
+                                className="form-control"
+                                value={interiorColor}
+                                placeholder="interior"
+                                onChange={e => setInteriorColor(e.target.value)}
+                            />
+                            { /* Helper */}
+                            <small className="text-secondary">Enter Interior Color</small>
+
+                        </div>
+                        { /* Interior Color - End */}
+
+                        { /* Exterior Color - Start */}
+                        <div className="form-group">
+                            <label htmlFor="exteriorColor" className="color-red">Exterior</label>
+                            <input
+                                form="form"
+                                type="text"
+                                required="required"
+                                id="exteriorColor"
+                                name="exteriorColor"
+                                className="form-control"
+                                value={exteriorColor}
+                                placeholder="exterior"
+                                onChange={e => setExteriorColor(e.target.value)}
+                            />
+                            { /* Helper */}
+                            <small className="text-secondary">Enter Exterior Color</small>
+
+                        </div>
+                        { /* Exterior Color - End */}
+
+                        { /* Engine Type - Start */}
+                        <div className="form-group ">
+                            <label htmlFor="engineType" className="color-red">Engine</label>
+                            <select
+                                form="form"
+                                id="engineType"
+                                name="engineType"
+                                value={engineType}
+                                required="required"
+                                className="form-control"
+                                onChange={e => setEngineType(e.target.value)}
+                            >
+                                <option value="">Select Engine</option>
+                                <option value="2.4l">2.4L</option>
+                                <option value="2.6l">2.6l</option>
+                                <option value="3.0l">3.0L</option>
+                                <option value="5.0l">5.0L</option>
+                            </select>
+                            <small className="text-secondary">Choose Engine</small>
+
+                        </div>
+                        { /* Engine Type - End */}
+
+                        { /* Drivetrain - Start */}
+                        <div className="form-group ">
+                            <label htmlFor="engineType" className="color-red">Drivetrain</label>
+                            <select
+                                form="form"
+                                id="drivetrain"
+                                name="drivetrain"
+                                value={drivetrain}
+                                required="required"
+                                className="form-control"
+                                onChange={e => setDrivetrain(e.target.value)}
+                            >
+                                <option value="">Select Drivetrain</option>
+                                <option value="awd">AWD</option>
+                                <option value="fwd">FWD</option>
+                            </select>
+                            <small className="text-secondary">Choose drivetrain</small>
+
+                        </div>
+                        { /* Drivetrain - End */}
+
+                        { /* Transmission - Start */}
+                        <div className="form-group">
+                            <label htmlFor="transmission" className="color-red">Transmission</label>
+                            <input
+                                form="form"
+                                type="text"
+                                required="required"
+                                id="transmission"
+                                name="transmission"
+                                className="form-control"
+                                value={transmission}
+                                placeholder="transmission"
+                                onChange={e => setTransmission(e.target.value)}
+                            />
+                            { /* Helper */}
+                            <small className="text-secondary">Enter vehicle modal</small>
+
+                        </div>
+                        { /* Transmission - End */}
+
+                        { /* Number Of Keys - Start */}
+                        <div className="form-group">
+                            <label htmlFor="numberOfKeys" className="color-red">Number Of Keys</label>
+                            <input
+                                form="form"
+                                type="number"
+                                id="numberOfKeys"
+                                name="numberOfKeys"
+                                value={numberOfKeys}
+                                className="form-control"
+                                onChange={e => setNumberOfKeys(e.target.value)}
+                                placeholder="# keys"
+                            />
+                            <small className="text-secondary">Enter Number Of Keys </small>
+                        </div>
+                        { /* Number Of Keys - End */}
+
+                        { /* Doors - Start */}
+                        <div className="form-group">
+                            <label htmlFor="doors" className="color-red">Number Of Doors</label>
+                            <input
+                                form="form"
+                                type="number"
+                                id="doors"
+                                name="doors"
+                                value={doors}
+                                className="form-control"
+                                onChange={e => setDoors(e.target.value)}
+                                placeholder="# doors"
+                            />
+                            <small className="text-secondary">Enter Number Of Doors </small>
+                        </div>
+                        { /* Doors - End */}
+
+                        { /* MPG / milesPerGallon - Start */}
+                        <div className="form-group">
+                            <label htmlFor="milesPerGallon" className="color-red">MPG</label>
+                            <input
+                                form="form"
+                                type="text"
+                                id="milesPerGallon"
+                                required="required"
+                                name="milesPerGallon"
+                                value={milesPerGallon}
+                                placeholder="milesPerGallon"
+                                className="form-control"
+                                onChange={e => setMilesPerGallon(e.target.value)}
+                            />
+                            { /* Helper */}
+                            <small className="text-secondary">Enter MPG</small>
+
+                        </div>
+                        { /* MPG / milesPerGallon - End */}
+
+                    </div>
+                    { /* Details - End */}
+
+                </div>
+                { /* Details - End */}
 
             </div>
-            { /* Organization, Property Address, & Property Information - Start */}
+            { /* Seller, Vehicle Information, & Details - Start */}
 
             { /* form, Post Description, Submit Button - Start */}
             <div className="col-sm-12 m-0">
-                <form onSubmit={handleSubmit} id="form">
-
-                    { /* Post Description - Start */}
-                    <div className="form-group">
-                        <label htmlFor="comment" className="color-red">Description</label>
-                        <textarea
-                            rows="5"
-                            required="required"
-                            id="postDescription"
-                            name="postDescription"
-                            value={postDescription}
-                            className="form-control"
-                            placeholder="Some description"
-                            onChange={e => setPostDescription(e.target.value)}
-                        ></textarea>
-                    </div>
-                    { /* Post Description - End */}
+                <form onSubmit={handleSubmit} id="form"> 
 
                     { /* Submit Button - Start */}
                     <LoaderButton
@@ -809,9 +788,10 @@ function Preview(props) {
 
         image1,
         userId,
-        postStatus,
-        postPrice,
-        postType,
+        vehicleModal,
+        vehicleMake,
+        vehicleYear,
+        vehiclePrice,
 
     } = props;
 
@@ -822,14 +802,12 @@ function Preview(props) {
                 <div className="card border-0">
 
                     { /* Image */}
-                    <S3Image level="protected" identityId={userId} imgKey={image1} /> 
+                    <img src={image2} />
 
                     { /* Body */}
                     <div className="card-body">
-                        <span className="badge badge-primary rounded">{postStatus} - 4 HOURS AGO</span>
-                        <p className="m-0"><small>{postType}</small></p>
-                        <p><b>${postPrice}</b></p>
-                        <p className="card-text">5 bed - 2.5 bath - 9,148 sqft lot</p>
+                        <p className="m-0">{vehicleYear + " " + vehicleMake + " " + vehicleModal}</p>
+                        <p><b>${vehiclePrice}</b></p>
                     </div>
 
                 </div>

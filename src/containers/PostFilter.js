@@ -1,14 +1,11 @@
 // This file is exported to ---> src/Routes.js
 // React required
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-// Amplify required
-import { S3Image } from 'aws-amplify-react';
-import { API } from "aws-amplify";
+import { useParams } from "react-router-dom"; 
 // CSS
-import "../css/PostFilter.css"
+import "../css/PostFilter.css";
 // Dummy data
-import { data as dummyPosts } from "../DummyData/data"
+import { data as dummyPosts } from "../DummyData/data";
 // -------------- Application Begins Bellow ------------ //
 
 // Main Application
@@ -18,7 +15,37 @@ export default function PostFilter() {
     const { name } = useParams();
     const [search, setSearch] = useState(""); 
     const [isLoading, setIsLoading] = useState(false);
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState([{
+        postStatus: "",
+        promotion: "",
+        vehicleModal: "Carabana",
+        vehicleMake: "Gradi",
+        vehicleYear: 2021,
+        vehiclePrice: 10000,
+        vehicleMileage: 10000,
+        milesPerGallon: "",
+        bodyStyle: "",
+        engineType: "",
+        interiorColor: "",
+        drivetrain: "",
+        numberOfKeys: 2,
+        exteriorColor: "",
+        transmission: "",
+        doors: 2,
+        vin: "",
+        seller: {
+            id: "",
+            firstName: "",
+            lastName: "",
+        },
+        images: {
+            image1: null,
+            image2: null,
+            image3: null,
+            image4: null,
+            image5: null,
+        }
+    }]);
 
     // Handling search
     async function handleSearch(event) {
@@ -44,21 +71,11 @@ export default function PostFilter() {
         async function onLoad() {
 
             setIsLoading(true);
-
-            // Loading post from Dynamodb 
-            function loadPosts() {
-                // Note: "posts" is the [API] -> [endpoint] -> [name] in src -> index.js
-                return API.get("posts", `/searching/all/${name}`);
-            } 
-
+             
             try {
-
-                // Important variable
-                const posts = await loadPosts(); 
                  
-                if (!unmounted) {
-                    // Saving retreived data into posts variable
-                    setPosts(posts); 
+                 
+                if (!unmounted) { 
                 }
                 setIsLoading(false);
 
@@ -74,8 +91,7 @@ export default function PostFilter() {
 
         // Avoid data leaks by cleaning up useEffect : unmounted
         return () => {
-            unmounted = true; 
-            setPosts([]);
+            unmounted = true;  
         };
 
     }, [name]);
@@ -84,7 +100,7 @@ export default function PostFilter() {
     return (
         <main id="PostFilter"> 
             <Header handleSearch={handleSearch} setSearch={setSearch} search={search} />
-            <SectionA posts={posts} name={name} isLoading={isLoading} />          
+            <SectionA posts={dummyPosts} name={name} isLoading={isLoading} />          
         </main>
         );
 }
@@ -97,11 +113,11 @@ function Header(props) {
 
     // Return UI
     return (
-        <header id="Header" className="container-fluid row m-0 bg-dark">
+        <header id="Header" className="container-fluid row m-0 bg-white border-bottom border-black">
             <nav className="navbar navbar-expand-md">
 
                 { /* Button - Start */ }
-                <button className="navbar-toggler text-white" type="button" data-toggle="collapse" data-target="#collapsibleLowerNavbar">
+                <button className="navbar-toggler text-black" type="button" data-toggle="collapse" data-target="#collapsibleLowerNavbar">
                     Filter <span className="fa fa-bars"></span>
                 </button>
                 { /* Button - End */ }                 
@@ -112,7 +128,7 @@ function Header(props) {
                     { /* Previous Page - Start */ }
                     <ul className="navbar-nav">
                         <li className="nav-item">
-                            <a className="nav-link text-white border-right mr-3 pr-3" href="/"> <i className="fa fa-reply"></i> Back Home </a>
+                            <a className="nav-link text-black border-right mr-3 pr-3" href="/"> <i className="fa fa-reply" role="img" aria-label="back home"></i> Back Home </a>
                         </li>
                     </ul>
                     { /* Previous Page - Start */ }
@@ -126,7 +142,7 @@ function Header(props) {
 
                         { /* Price Dropdown */ }
                         <li className="nav-item dropdown mr-3">
-                            <a className="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                            <a className="nav-link text-black dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                                 Price
                             </a>
                             <div className="dropdown-menu">
@@ -139,27 +155,26 @@ function Header(props) {
 
                         { /* Property Type Dropdown */ }
                         <li className="nav-item dropdown mr-3">
-                            <a className="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                                Property Type
+                            <a className="nav-link text-black dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                                Vehicle Type
                             </a>
                             <ul className="dropdown-menu">
                                 <a className="dropdown-item" href="/filter/all">+ Any</a>
-                                <a className="dropdown-item" href="/filter/single">+ Single Family Home</a>
-                                <a className="dropdown-item" href="/filter/townhome">+ Townhome</a>
-                                <a className="dropdown-item" href="/filter/condo">+ Condo</a>
+                                <a className="dropdown-item" href="/filter/sedan">+ Sedan</a>
+                                <a className="dropdown-item" href="/filter/coupe">+ Coupe</a>
+                                <a className="dropdown-item" href="/filter/pickup">+ Pickup</a>
                             </ul>
                         </li>
 
                         { /* Listing Status Dropdown */ }
                         <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                                Listing Status
+                            <a className="nav-link text-black dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                                Vehicle Status
                             </a>
                             <div className="dropdown-menu">
                                 <a className="dropdown-item" href="/filter/pending">+ Pending</a>
                                 <a className="dropdown-item" href="/filter/sold">+ Sold</a>
-                                <a className="dropdown-item" href="/filter/avalable">+ Available</a>
-                                <a className="dropdown-item" href="/filter/foreclosure">+ Foreclosures</a>
+                                <a className="dropdown-item" href="/filter/avalable">+ Available</a> 
                             </div>
                         </li> 
                     </ul>
@@ -194,14 +209,14 @@ function Search(props) {
                         name="search"
                         value={search}
                         placeholder="Search"
-                        className="form-control"
+                        className="form-control border-black"
                         onChange={e => setSearch(e.target.value)}
                     />
                     { /* Input - End */}
 
                     { /* Button - Start */}
                     <div className="input-group-append">
-                        <button className="btn btn-light border" type="submit">
+                        <button className="btn btn-dark border-0" type="submit">
                             <i className='fa fa-search' role="img" aria-label="search"></i>
                         </button>
                     </div>
@@ -229,129 +244,142 @@ function SectionA(props) {
                 <h2>Searching for <i className="text-capitalize">{name}</i></h2>
                 <p>{ posts.length } Results </p>
             </div>
-             
-            {!isLoading ?
 
+            {/* Posts - Start 
+              * - With - !isLoading && posts, we want only to return data if we have any.
+              * - If we have no data and omit "&& posts" we will get an error!
+              */}
+            {!isLoading && posts ?
+
+                // Display after we have loaded our data
                 posts.map((post, i) => {
+
 
                     // Important variables
                     const { image1 } = post.images;
-                    const { streetState, streetCity } = post.address;
-                    const { postId, userId, postStatus } = post;
-                    const convertDate = new Date(post.createdAt);
-                    const postedOn = convertDate.toDateString();
-                    const price = Number(post.postPrice).toLocaleString();
+                    const { userId, postId, promotion, vehicleModal, vehicleMake, vehicleYear } = post;
+                    // Price & mileage 
+                    const price = Number(post.vehiclePrice).toLocaleString();
+                    const vehicleMileage = Number(post.vehicleMileage).toLocaleString();
+
 
                     // Return UI
                     return (
-                        <div className="col-md-6 col-lg-4 text-white p-2" key={i++}>
+                        <div className="col-md-4 col-lg-3 p-2" key={i++}>
+                            <a href={`/view/${postId}`} >
+                                <div className="card shadow-sm border-black">
 
-                            <a href={`/view/${postId}`} className="text-white link-card">
-                                <div className="card shadow-sm">
+                                    { /* Imabe */}
+                                    <img src={image1} />
 
-                                    { /* Image */}
-                                    <S3Image level="protected" identityId={userId} imgKey={image1} />
-
-                                    { /* Overlay - Start */}
+                                    { /* overlay */}
                                     <div className="card-img-overlay">
 
-                                        { /* Top */}
+                                        { /* Top overlay */}
                                         <div className="overlay-top">
-                                            <span className="badge badge-primary rounded">
-                                                {postStatus} - {postedOn}
+                                            <span className="bg-white text-dark px-3 py-1 rounded border border-dark">
+                                                Great Deal <i className="fa fa-info-circle" role="img" aria-label="circle"></i>
                                             </span>
-                                        </div>
 
-                                        { /* Bottom */}
-                                        <div className="overlay-bottom">
-                                            <p className="m-0"><small>{streetCity}, {streetState}</small></p>
-                                            <p><b>${price}</b></p>
+                                        </div>
+                                    </div>
+
+                                    { /* body */}
+                                    <div className="card-body p-0 border-top border-black">
+
+                                        <div className="float-left p-3 w-50">
+                                            <p className="m-0 text-black" style={{ textTransform: "uppercase" }}>
+                                                <b> {vehicleYear} {vehicleMake} {vehicleModal} </b>
+                                            </p>
+                                            <p className="m-0 text-secondary"><small>Standard Range Plus</small></p>
+                                        </div>
+                                        <div className="float-right text-right p-3 w-50">
+                                            <p className="m-0 text-black"><b>${price}</b></p>
+                                            <p className="m-0 text-secondary"><small>{promotion}</small></p>
                                         </div>
 
                                     </div>
-                                    { /* Overlay - End */}
+                                    <div className="card-footer bg-black">
+                                        <div className="float-left text-white"><small>{vehicleMileage} miles</small></div>
+                                        <div className="float-right text-white"><small>Free Shipping <i className="fa fa-motorcycle" role="img" aria-label="motorcycle"></i></small></div>
+                                    </div>
 
                                 </div>
                             </a>
-
                         </div>
                     );
                 })
                 :
+                // Display while Loading data
                 "Loading"
-            }
+            } 
+            {/* Post - End */}
              
+            {/* Dummy Posts - End */}
             {
                 dummyPosts.map((post, i) => {
 
-
                     // Important variables
-                    const { imageA } = post.images;
-                    const { postState, postCity } = post.address;
-                    const { postId, postStatus } = post;
-                    const convertDate = new Date(post.createdAt);
-                    const postedOn = convertDate.toDateString();
-                    const price = Number(post.postPrice).toLocaleString();
-
+                    const { image1 } = post.images;
+                    const { postId, promotion, vehicleModal, vehicleMake, vehicleYear } = post;
+                    // Price
+                    const price = Number(post.vehiclePrice).toLocaleString();
+                    const vehicleMileage = Number(post.vehicleMileage).toLocaleString();
 
                     // Return UI
                     return (
-                        <div className="col-md-6 col-lg-4 text-white p-2" key={i++}>
+                        <div className="col-md-4 col-lg-3 p-2" key={i++}>
+                            <a href={`/view/${postId}`} >
+                                <div className="card shadow-sm border-black">
 
-                            <a href={`/view/${postId}`} className="text-white">
-                                <div className="card shadow-sm">
+                                    { /* Imabe */}
+                                    <img src={image1} />
 
-                                    { /* Image */}
-                                    <img src={imageA} />
-
-
-                                    { /* Overlay - Start */}
+                                    { /* overlay */}
                                     <div className="card-img-overlay">
 
-                                        { /* Top */}
+                                        { /* Top overlay */}
                                         <div className="overlay-top">
-                                            <span className="badge badge-primary rounded">
-                                                {postStatus} - {postedOn}
+                                            <span className="bg-white text-dark px-3 py-1 rounded border border-dark">
+                                                Great Deal <i className="fa fa-info-circle" role="img" aria-label="circle"></i>
                                             </span>
-                                        </div>
 
-                                        { /* Bottom */}
-                                        <div className="overlay-bottom">
-                                            <p className="m-0"><small>{postCity}, {postState}</small></p>
-                                            <p><b>${price}</b></p>
+                                        </div>
+                                    </div>
+
+                                    { /* body */}
+                                    <div className="card-body p-0 border-top border-black">
+
+                                        <div className="float-left p-3 w-50">
+                                            <p className="m-0 text-black" style={{ textTransform: "uppercase" }}>
+                                                <b> {vehicleYear} {vehicleMake} {vehicleModal} </b>
+                                            </p>
+                                            <p className="m-0 text-secondary"><small>Standard Range Plus</small></p>
+                                        </div>
+                                        <div className="float-right text-right p-3 w-50">
+                                            <p className="m-0 text-black"><b>${price}</b></p>
+                                            <p className="m-0 text-secondary"><small>{promotion}</small></p>
                                         </div>
 
                                     </div>
-                                    { /* Overlay - End */}
+
+                                    { /* Footer */}
+                                    <div className="card-footer bg-black">
+                                        <div className="float-left text-white">
+                                            <small>{vehicleMileage} miles</small>
+                                        </div>
+                                        <div className="float-right text-white">
+                                            <small>Free Shipping <i className="fa fa-motorcycle" role="img" aria-label="motorcycle"></i></small>
+                                        </div>
+                                    </div>
 
                                 </div>
                             </a>
-
                         </div>
                     );
                 })
-            }
-
-
-            <div className="col-sm-12 pt-5">
-                <h2>What's happening in Metro Atlanta, GA</h2>
-            </div> 
-            <div className="col-sm-3 p-2">
-                <h3>1,627</h3>
-                <p>Homes for sale</p>
-            </div> 
-            <div className="col-sm-3 p-2">
-                <h3>50</h3>
-                <p>Open Homes</p>
-            </div> 
-            <div className="col-sm-3 p-2">
-                <h3>3,709</h3>
-                <p>Recently Sold</p>
-            </div> 
-            <div className="col-sm-3 p-2">
-                <h3>159</h3>
-                <p>Price reduced</p>
-            </div>
+            } 
+            {/* Dummy Posts - End */}
 
         </section>
         );

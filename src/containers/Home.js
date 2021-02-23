@@ -1,15 +1,10 @@
 // This file is exported to ---> src/Routes.js
 // React required
-import React, { useState, useEffect } from "react";
-// Amplify required
-import { S3Image } from 'aws-amplify-react';
-import { API } from "aws-amplify";
+import React, { useState, useEffect } from "react"; 
 // Getting - user status (user login - true or false) - from useAppContext
 import { useAppContext } from "../libs/contextLib"; 
 // Dummy Images 
-import img1 from "../img/imgmain.jpg"
-import img2 from "../img/imgcc.jpg"
-import img3 from "../img/imgbb.jpg"
+import img1 from "../img/img1.jpg" 
 // CSS
 import "../css/Home.css"
 // Dummy data
@@ -23,7 +18,37 @@ export default function Home() {
     const [search, setSearch] = useState("");
     const { isAuthenticated } = useAppContext();
     const [isLoading, setIsLoading] = useState(false); 
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState([{
+        postStatus: "",
+        promotion: "",
+        vehicleModal: "",
+        vehicleMake: "",
+        vehicleYear: 2021,
+        vehiclePrice: 10000,
+        vehicleMileage: 10000,
+        milesPerGallon: "",
+        bodyStyle: "",
+        engineType: "",
+        interiorColor: "",
+        drivetrain: "",
+        numberOfKeys: 2,
+        exteriorColor: "",
+        transmission: "",
+        doors: 2,
+        vin: "",
+        seller: {
+            id: "",
+            firstName: "",
+            lastName: "",
+        },
+        images: {
+            image1: null,
+            image2: null,
+            image3: null,
+            image4: null,
+            image5: null,
+        }
+    }]);
 
     // Handling search
     async function handleSearch(event) {
@@ -49,12 +74,9 @@ export default function Home() {
             setIsLoading(true);
 
             try {
+                 
 
-                const posts = await loadPosts(); 
-
-                if (!unmounted) {
-                    // Saving retreived data into posts variable
-                    setPosts(posts); 
+                if (!unmounted) { 
                 }
                 setIsLoading(false);
 
@@ -72,12 +94,7 @@ export default function Home() {
             setPosts([]);
         };
 
-    }, [isAuthenticated]); 
-
-    // Function getting data from database
-    function loadPosts() {
-        return API.get("posts", "/publicposts");
-    } 
+    }, [isAuthenticated]);  
 
     // Return UI
     return (
@@ -86,10 +103,6 @@ export default function Home() {
             <Header handleSearch={handleSearch} setSearch={setSearch} search={search} />
 
             <SectionA posts={posts} isLoading={isLoading} />
-
-            <SectionB />
-
-            <SectionC/>
             
         </main>
         );
@@ -104,13 +117,13 @@ function Header(props) {
     // Return UI
     return (
 
-        <header  id="Header" className="container-fluid row m-0" style={{ backgroundImage: `url(${img1})` }} >
+        <header  id="Header" className="container-fluid mx-auto row m-0" style={{ backgroundImage: `url(${img1})` }} >
 
-            <div className="col-sm-9 mx-auto align-self-center text-center text-white">
-
-                <h1 className="text-white"> Let's find the best home for you </h1>
-
-                <p> Search our inventory on thousands of homes, a click away. </p>
+            <div className="col-sm-4 mx-auto align-self-center text-center text-white border border-white rounded p-4 shadow">
+                <h1> Vehicle Listing Application </h1>
+                <p> Build a listing application for your client </p>
+            </div>
+            <div className="col-sm-6 mx-auto align-self-center text-center text-white"> 
 
                 { /* Search field block - Start */}
                 <Search handleSearch={handleSearch} setSearch={setSearch} search={search} />
@@ -143,7 +156,7 @@ function Search(props) {
                         name="search"
                         value={search}
                         placeholder="search"
-                        className="form-control"
+                        className="form-control border border-warning"
                         onChange={e => setSearch(e.target.value)}
                     />
                     { /* Input - End */}
@@ -151,8 +164,8 @@ function Search(props) {
                     { /* Button - Start */}
                     <div className="input-group-append">
 
-                        <button className="btn btn-danger" type="submit">
-                            Search <i className='fa fa-search' role="img" aria-label="search"></i>
+                        <button className="btn btn-black border border-warning" type="submit">
+                            <i className='fa fa-search' role="img" aria-label="search"></i>
                         </button>
 
                     </div>
@@ -174,71 +187,38 @@ function SectionA({ posts, isLoading }) {
         <section id="SectionA" className="container-fluid row py-5 bg-white border-bottom m-0">
 
             {/* Heading - Start */}
-            <div className="col-sm-12 pb-5">
-                <h2>New Listings in Metro Atlanta, GA</h2>
-                <p><a href="#">View All New Listings</a></p>
+            <div className="col-sm-12 pb-5"> 
+                <div className="row text-center"> 
+                    <div className="col-md-12 mb-5"> 
+                        <h2>Your Guide to the Top Cars and Trucks</h2>
+                        <p>We sifted through the data and found the best cars and trucks in every category, so you can make a research-driven decision on the car you want.</p>
+                    </div>
+                    <div className="col-md-4"> 
+                        <h3>
+                            <i class="fa fa-qrcode d-block"></i>
+                            <span className="d-block"> Car Finder </span>
+                        </h3>
+                        <p>Answer a few questions to find the right car for you.</p>
+                    </div>
+                    <div className="col-md-4"> 
+                        <h3>
+                            <i class="fa fa-calculator d-block"></i>
+                            <span className="d-block"> Loan Calculator  </span>
+                        </h3> 
+                        <p>Use our loan calculator to budget for your new car.</p>
+                    </div>
+                    <div className="col-md-4"> 
+                        <h3>
+                            <i class="fa fa-balance-scale d-block"></i>
+                            <span className="d-block"> Trade-In Estimator </span>
+                        </h3>
+                        <p>License or VIN not on-hand? Get a quick estimated value on your vehicle.</p>
+                    </div>
+                </div>
             </div>
             {/* Heading - End */}
 
-            {/* Posts - Start */}
-            {!isLoading ? 
-
-                posts.map((post, i) => {
-
-                    // Important variables
-                    const { image1 } = post.images;
-                    const { streetState, streetCity } = post.address;
-                    const { postId, userId, postStatus } = post;
-                    const convertDate = new Date(post.createdAt);
-                    const postedOn = convertDate.toDateString();
-                    const price = Number(post.postPrice).toLocaleString();
-
-                    // Return UI
-                    return (
-                        <div className="col-sm-6 col-md-4 col-lg-3 text-white p-2" key={i++}>
-
-                            <a href={`/view/${postId}`} className="text-white link-card">
-                                <div className="card shadow-sm">
-
-                                    { /* Image */ }
-                                    <S3Image level="protected" identityId={userId} imgKey={image1} />
-
-                                    { /* Overlay - Start */ }
-                                    <div className="card-img-overlay">
-
-                                        { /* Top */ }
-                                        <div className="overlay-top">
-                                            <span className="badge badge-primary rounded">
-                                                {postStatus} - {postedOn}
-                                            </span>
-                                        </div>
-
-                                        { /* Bottom */ }
-                                        <div className="overlay-bottom">
-                                            <p className="m-0"><small>{streetCity}, {streetState}</small></p>
-                                            <p><b>${price}</b></p>
-                                        </div>
-
-                                    </div>
-                                    { /* Overlay - End */}
-
-                                </div>
-                            </a>
-
-                        </div>
-                    );
-                })
-                    :
-                "Loading"
-            }
-            {/* Posts - End */}
-
-            {/* Heading - Start */}
-            <div className="col-sm-12 py-5">
-                <h2>Pending Listings in Metro Atlanta, GA</h2>
-                <p><a href="#">View All New Listings</a></p>
-            </div>
-            {/* Heading - End */}
+            {/* Posts - Start */} 
 
             {/* Dummy Posts - Start */}
             {
@@ -246,144 +226,62 @@ function SectionA({ posts, isLoading }) {
 
 
                     // Important variables
-                    const { imageA } = post.images;
-                    const { postState } = post.address;
-                    const { postId, userId, postStatus } = post;
-                    const convertDate = new Date(post.createdAt);
-                    const postedOn = convertDate.toDateString();
-                    const price = Number(post.postPrice).toLocaleString();
+                    const { image1 } = post.images;
+                    const { userId, postId, promotion, vehicleModal, vehicleMake, vehicleYear } = post;
+                    // Price
+                    const price = Number(post.vehiclePrice).toLocaleString();
+                    const vehicleMileage = Number(post.vehicleMileage).toLocaleString();
 
 
                     // Return UI
                     return (
-                        <div className="col-sm-6 col-md-4 col-lg-3 text-white p-2" key={i++}>
+                        <div className="col-md-4 col-lg-3 p-2" key={i++}>
+                            <a href={`/view/${postId}`} >
+                                <div className="card shadow-sm border-secondary">
 
-                            <a href={`/view/${postId}`} className="text-white link-card">
-                                <div className="card border-0 shadow-sm">
+                                    { /* Imabe */}
+                                    <img src={image1} />
 
-                                    { /* Image */}
-                                    <img src={imageA} />
-
-
-                                    { /* Overlay - Start */}
+                                    { /* overlay */}
                                     <div className="card-img-overlay">
 
-                                        { /* Top */}
+                                        { /* Top overlay */}
                                         <div className="overlay-top">
-                                            <span className="badge badge-primary rounded">
-                                                {postStatus} - {postedOn}
+                                            <span className="bg-white text-dark px-3 py-1 rounded border border-dark">
+                                                Great Deal <i class="fa fa-info-circle"></i>
                                             </span>
-                                        </div>
 
-                                        { /* Bottom */}
-                                        <div className="overlay-bottom">
-                                            <p className="m-0"><small>{postState}</small></p>
-                                            <p><b>${price}</b></p>
+                                        </div>
+                                    </div>
+
+                                    { /* body */}
+                                    <div className="card-body p-0 border-top border-black">
+
+                                        <div className="float-left p-3 w-50">
+                                            <p className="m-0 text-black" style={{ textTransform: "uppercase" }}>
+                                                <b> {vehicleYear} {vehicleMake} {vehicleModal} </b>
+                                            </p>
+                                            <p className="m-0 text-secondary"><small>Standard Range Plus</small></p>
+                                        </div>
+                                        <div className="float-right text-right p-3 w-50">
+                                            <p className="m-0 text-black"><b>${price}</b></p>
+                                            <p className="m-0 text-secondary"><small>{promotion}</small></p>
                                         </div>
 
                                     </div>
-                                    { /* Overlay - End */}
+                                    <div className="card-footer bg-black">
+                                        <div className="float-left text-white"><small>{vehicleMileage} miles</small></div>
+                                        <div className="float-right text-white"><small>Free Shipping <i class="fa fa-motorcycle"></i></small></div>
+                                    </div>
 
                                 </div>
                             </a>
-
                         </div>
                     );
                 })
             }
-            {/* Dummy Posts - End */}
-             
-            <div className="col-sm-12 pt-5">
-                <h2>What's happening in Metro Atlanta, GA</h2>
-            </div> 
-            <div className="col-sm-3 p-2">
-                <h3 className="m-0">1,627</h3>
-                <p>Homes for sale</p>
-            </div> 
-            <div className="col-sm-3 p-2">
-                <h3 className="m-0">50</h3>
-                <p>Open Homes</p>
-            </div> 
-            <div className="col-sm-3 p-2">
-                <h3 className="m-0">3,709</h3>
-                <p>Recently Sold</p>
-            </div> 
-            <div className="col-sm-3 p-2">
-                <h3 className="m-0">159</h3>
-                <p>Price reduced</p>
-            </div>
+            {/* Dummy Posts - End */} 
 
-        </section>
-        );
-}
-
-function SectionB() {
-    return (
-        <header id="SectionB" className="container-fluid row m-0 vh-100" style={{ backgroundImage: `url(${img3})` }}>
-            <div className="col-sm-12 col-md-9 col-lg-6 mx-auto align-self-center text-center text-white">
-                <h2 className="border-bottom pb-3">Trends</h2>
-                <h3 className="pb-3">Looking for the cheapest place to rent? Here are some properites for you. </h3> 
-                <button type="button" className="btn btn-outline-light">Read More</button>
-            </div>
-        </header>
-    );
-}
-
-function SectionC() {
-    return (
-        <section className="container-fluid row mx-auto py-5">
-            <div className="col-sm-6 col-md-4 col-lg-3 p-2">
-                <div className="card shadow-sm">
-                    <img className="card-img-top" src={img2} alt={`Home ${img1}`} />
-                    <div className="card-img-overlay text-white">
-                        <div className="overlay-top">
-                            <span className="badge badge-primary rounded">HOME IMPORVEMENT</span>
-                        </div>
-                    </div>
-                    <div className="card-body"> 
-                        <p className="card-text">The Brothers Innovations</p> 
-                    </div>
-                </div>
-            </div>
-            <div className="col-sm-6 col-md-4 col-lg-3 p-2">
-                <div className="card shadow-sm">
-                    <img className="card-img-top" src={img2} alt={`Home ${img1}`} />
-                    <div className="card-img-overlay text-white">
-                        <div className="overlay-top">
-                            <span className="badge badge-primary rounded">BUY</span>
-                        </div>
-                    </div>
-                    <div className="card-body"> 
-                        <p className="card-text">The Brothers Innovations</p> 
-                    </div>
-                </div>
-            </div>
-            <div className="col-sm-6 col-md-4 col-lg-3 p-2">
-                <div className="card shadow-sm">
-                    <img className="card-img-top" src={img2} alt={`Home ${img1}`} />
-                    <div className="card-img-overlay text-white">
-                        <div className="overlay-top">
-                            <span className="badge badge-primary rounded">HOME IMPORVEMENT</span>
-                        </div>
-                    </div>
-                    <div className="card-body"> 
-                        <p className="card-text">The Brothers Innovations</p> 
-                    </div>
-                </div>
-            </div>
-            <div className="col-sm-6 col-md-4 col-lg-3 p-2">
-                <div className="card shadow-sm">
-                    <img className="card-img-top" src={img2} alt={`Home ${img1}`} />
-                    <div className="card-img-overlay text-white">
-                        <div className="overlay-top">
-                            <span className="badge badge-primary rounded">SPONSORED CONTENT</span>
-                        </div>
-                    </div>
-                    <div className="card-body"> 
-                        <p className="card-text">The Brothers Innovations</p> 
-                    </div>
-                </div>
-            </div>
         </section>
         );
 }

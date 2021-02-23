@@ -7,7 +7,7 @@ import { Auth } from "aws-amplify";
 // Getting - user status (user login - true or false) - from useAppContext
 import { useAppContext } from "../libs/contextLib";
 // CSS
-import "../css/Navigation.css"
+import "../css/Navigation.css";
 // -------------- Application Begins Bellow ------------ //
 
 // Main function
@@ -20,10 +20,12 @@ export default function Navigation() {
     // Handling Logout
     async function handleLogout() {
 
+        // Amplify signout
         await Auth.signOut();
 
         userHasAuthenticated(false);
 
+        // Redirect
         window.location.href = '/login';
 
     }
@@ -49,7 +51,7 @@ export default function Navigation() {
         <nav id="Navigation" className="navbar navbar-expand-lg bg-white shadow-sm">
 
             { /* Brand - Start */}
-            <Link className="navbar-brand p-0" to="/">Larissa</Link>
+            <Link className="navbar-brand p-0 text-black" to="/">Playday</Link>
             { /* Brand - End */}
 
             { /* Toggler/collapsibe Button - Start */}
@@ -65,13 +67,8 @@ export default function Navigation() {
                     <AppliedLinks/>
                     { /* Other Links - End */}
 
-                    { /* Return Tabs whenever the user is Logged In or Logged Out - Start */}
-                    {isAuthenticated ? (
-                        <AuthenticatedLinks handleLogout={handleLogout} />
-                    ) : ( 
-                        <UnauthenticatedLinks/> 
-                    )}
-                    { /* Return Tabs whenever the user is Logged In or Logged Out - Start */}
+                    <AuthenticatedLinks handleLogout={handleLogout} />
+                    <UnauthenticatedLinks/> 
 
                     { /* Search - Start */}
                     <Search handleSearch={handleSearch} setSearch={setSearch} search={search} />
@@ -105,14 +102,14 @@ function Search(props) {
                         name="search"
                         value={search}
                         placeholder="search"
-                        className="form-control"
+                        className="form-control border-secondary"
                         onChange={e => setSearch(e.target.value)}
                     />
                     { /* Input - End */}
 
                     { /* Button - Start */}
                     <div className="input-group-append">
-                        <button className="btn btn-light border" type="submit">
+                        <button className="btn btn-black border-black" type="submit">
                             <i className='fa fa-search' role="img" aria-label="search"></i>
                         </button>
                     </div>
@@ -132,77 +129,27 @@ function AppliedLinks() {
         <> 
             { /* Condo - Start */}
             <li className="nav-item">
-                <Link className="nav-link" to="/filter/condo">
-                    Condo
+                <Link className="nav-link text-black" to="/filter/new">
+                    New
                 </Link>
             </li>
             { /* Condo - End */}
 
             { /* Land - Start */}
             <li className="nav-item">
-                <Link className="nav-link" to="/filter/land">
-                    Land
+                <Link className="nav-link text-black" to="/filter/used">
+                    Used
                 </Link>
             </li>
             { /* Land - End */}
 
             { /* Sell - Start */}
             <li className="nav-item">
-                <Link className="nav-link" to="/sell">
-                    Sell
+                <Link className="nav-link text-black" to="/sell">
+                    Sell / Trade
                 </Link>
             </li> 
-            { /* Sell - End */}
-             
-            { /* Buy - Start */}
-            <li className="nav-item dropdown">
-
-                { /* Button */ }
-                <a className="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                    Buy
-                </a>
-
-                { /* Links */ }
-                <ul className="dropdown-menu px-3">
-
-                    <li className="nav-item">
-                        <Link className="nav-link" to="#nowhere">
-                            + Home for Sale
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/filter/new">
-                            + New Constructions
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/filter/senior">
-                            + Senior Homes
-                        </Link>
-                    </li>
-                    <div className="dropdown-header">Homes Values</div>
-
-                    <li className="nav-item">
-                        <Link className="nav-link" to="#nowhere">
-                            + Housing Market
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="#nowhere">
-                            + Property Records
-                        </Link>
-                    </li> 
-                </ul>
-            </li>
-            { /* Buy - End */}
-
-            { /* News and Insight - Start */}
-            <li className="nav-item">
-                <Link className="nav-link" to="#nowhere">
-                    News & Insight
-                </Link>
-            </li>  
-            { /* News and Insight - End */}
+            { /* Sell - End */}  
         </>
         );
 }
@@ -216,7 +163,7 @@ function AuthenticatedLinks({ handleLogout }) {
             <div className="nav-item dropdown">
 
                 { /* Button */ }
-                <a className="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                <a className="nav-link dropdown-toggle text-black" href="#" id="navbardrop" data-toggle="dropdown">
                     <i className="fa fa-user-circle" role="img" aria-label="account"></i>
                 </a>
 
@@ -225,7 +172,7 @@ function AuthenticatedLinks({ handleLogout }) {
 
                     <li className="nav-item">
                         <Link className="nav-link" to="/postnew">
-                            + Add Properties
+                            + Add Vehicle
                         </Link>
                     </li>
                     <li className="nav-item">
@@ -241,9 +188,9 @@ function AuthenticatedLinks({ handleLogout }) {
             { /* Logout - Start */}
             <div className="nav-item dropdown" style={{ cursor: "pointer" }}>
                 <span
-                    className="nav-link"
+                    className="nav-link text-black"
                     onClick={handleLogout}
-                > Logout</span>
+                > <i class="fa fa-sign-out"></i> Logout</span>
             </div>
             { /* Logout - End */}
         </>
@@ -256,16 +203,16 @@ function UnauthenticatedLinks() {
         <>
             { /* Register - Start */}
             <li className="nav-item">
-                <Link className="nav-link" to="/register">
-                    Register
+                <Link className="nav-link text-black" to="/register">
+                    <i class="fa fa-street-view"></i> Register
                 </Link>
             </li>
             { /* Register - End */}
 
             { /* Sign In - Start */}
             <li className="nav-item">
-                <Link className="nav-link" to="/login">
-                    Login
+                <Link className="nav-link text-black" to="/login">
+                    <i class="fa fa-sign-in"></i> Login
                 </Link>
             </li>
             { /* Sign In - End */}

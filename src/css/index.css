@@ -25,3 +25,13 @@ input[type=file] {
 img {
     width: 100%;
 }
+.text-black{
+    color:black!important;
+}
+.bg-black, .btn-black{
+    background-color:black!important;
+    color:white!important;
+}
+.border-black{
+    border-color:black;
+}

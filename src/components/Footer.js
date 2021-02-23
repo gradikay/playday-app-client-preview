@@ -15,32 +15,32 @@ function SectionA() {
     return (
         <section className="row">
             <div className="col-sm-3">
-                <p>Popular Real Estate Markets</p>
+                <p>Popular Car Markets</p>
                 <ul style={{ listStyle: "none" }}>
-                    <li>Houston, TX Real Estate</li>
-                    <li>Atlanta, GA Real Estate</li>
-                    <li>Macon, GA Real Estate</li>
-                    <li>Los Angeles,CA Real Estate</li>
+                    <li>Houston, TX Cars</li>
+                    <li>Atlanta, GA Cars</li>
+                    <li>Macon, GA Cars</li>
+                    <li>Los Angeles,CA Cars</li>
                     <li className="text-primary"><small>SEE MORE</small></li>
                 </ul>
             </div>
             <div className="col-sm-3">
-                <p>Popular Apartment Cities</p>
+                <p>Popular Car Cities</p>
                 <ul style={{ listStyle: "none" }}>
-                    <li>Houston, TX Apartments</li>
-                    <li>Atlanta, GA Apartments</li>
-                    <li>Macon, GA Apartments</li>
-                    <li>Los Angeles, CA Apartments</li>
+                    <li>Houston, TX Cars</li>
+                    <li>Atlanta, GA Cars</li>
+                    <li>Macon, GA Cars</li>
+                    <li>Los Angeles, CA Cars</li>
                     <li className="text-primary"><small>SEE MORE</small></li>
                 </ul>
             </div>
             <div className="col-sm-3">
                 <p>Popular Resources</p>
                 <ul style={{ listStyle: "none" }}>
-                    <li>Free Landlord Software</li>
-                    <li>Homes for Sale</li>
-                    <li>Apartments and Houses for Rent</li>
-                    <li>Ntanku ya Koteka</li>
+                    <li>Free Seller Software</li>
+                    <li>New Cars for Sale</li>
+                    <li>Used and New Cars for Rent</li>
+                    <li>Motuka ya Koteka</li>
                     <li className="text-primary"><small>SEE MORE</small></li> 
                 </ul>
             </div>

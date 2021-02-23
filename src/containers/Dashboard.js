@@ -2,12 +2,12 @@
 // React required
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-// Amplify required
-import { API } from "aws-amplify";
-import { S3Image } from 'aws-amplify-react'; 
+// Amplify required  
 import { useAppContext } from "../libs/contextLib";
 // CSS
-import "../css/Dashboard.css"
+import "../css/Dashboard.css";
+import { data as dummyPosts } from "../DummyData/data";
+
 // -------------- Application Begins Bellow ------------ //
 
 // Main Application
@@ -16,7 +16,37 @@ export default function Dashboard() {
     // Important variables 
     const { isAuthenticated, userId, userEmail, userFirstName, signedupDate, userLastName} = useAppContext();
     const [isLoading, setIsLoading] = useState(false);
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState([{
+        postStatus: "",
+        promotion: "",
+        vehicleModal: "",
+        vehicleMake: "",
+        vehicleYear: 2021,
+        vehiclePrice: 10000,
+        vehicleMileage: 10000,
+        milesPerGallon: "",
+        bodyStyle: "",
+        engineType: "",
+        interiorColor: "",
+        drivetrain: "",
+        numberOfKeys: 2,
+        exteriorColor: "",
+        transmission: "",
+        doors: 2,
+        vin: "",
+        seller: {
+            id: "",
+            firstName: "",
+            lastName: "",
+        },
+        images: {
+            image1: null,
+            image2: null,
+            image3: null,
+            image4: null,
+            image5: null,
+        }
+    }]);
 
     // Retreiving data from database
     useEffect(() => {
@@ -27,21 +57,12 @@ export default function Dashboard() {
         async function onLoad() {
 
             setIsLoading(true);
-
-            // Loading products from Dynamodb
-            function loadPosts() {
-                // Note: "posts" is the [API] -> [endpoint] -> [name] in src -> index.js
-                return API.get("posts", "/posts");
-            } 
+             
 
             try {
+                 
 
-                // Important variable
-                const posts = await loadPosts();
-
-                if (!unmounted) {
-                    // Saving retreived data into posts variable
-                    setPosts(posts);
+                if (!unmounted) { 
                 }
 
                 setIsLoading(false);
@@ -58,8 +79,7 @@ export default function Dashboard() {
 
         // Avoid data leaks by cleaning up useEffect : unmounted
         return () => {
-            unmounted = true;
-            setPosts([]);
+            unmounted = true; 
         };
 
     }, [isAuthenticated]);
@@ -74,13 +94,13 @@ export default function Dashboard() {
                 userEmail={userEmail}
                 userFirstName={userFirstName}
                 signedupDate={signedupDate}
-                userLastName={userLastName} 
-                posts={posts && posts}
+                userLastName={userLastName}
+                posts={dummyPosts}
             /> 
             {/* Header - End */}
 
             {/* Posts - Start */}
-            <Posts posts={posts} isLoading={isLoading} /> 
+            <Posts posts={dummyPosts} isLoading={isLoading} /> 
             {/* Posts - End */}
 
         </main>
@@ -99,7 +119,7 @@ function Header(props) {
             <div className="row justify-content-center align-items-center">
                 <div className="col-sm-3 text-center">
                     <h1>Dashboard </h1>
-                    <Link to="/postnew" className="btn btn-warning"> + NEW POST <i className="fa fa-share"></i></Link> 
+                    <Link to="/postnew" className="btn btn-warning"> + NEW POST <i className="fa fa-share" role="img" aria-label="new post"></i></Link> 
                 </div>
                 <div className="col-sm-3">
                     <ul className="list-group list-group-flush"> 
@@ -125,66 +145,71 @@ function Posts({ posts, isLoading }) {
     // Return UI
     return (
         <div className="container row mx-auto py-5">
-            {!isLoading ?
+
+            {/* Posts - Start 
+              * - With - !isLoading && posts, we want only to return data if we have any.
+              * - If we have no data and omit "&& posts" we will get an error!
+              */}
+            {!isLoading && posts?
 
                 // Display after we have loaded our data
                 posts.map((post, i) => {
 
-
                     // Important variables
                     const { image1 } = post.images;
-                    const { streetState, streetCity } = post.address;
-                    const { postId, userId, postStatus } = post;
-                    const convertDate = new Date(post.createdAt);
-                    const postedOn = convertDate.toDateString();
-                    const price = Number(post.postPrice).toLocaleString();
-
+                    const { userId, postId, promotion, vehicleModal, vehicleMake, vehicleYear } = post; 
+                    // // Price & mileage 
+                    const price = Number(post.vehiclePrice).toLocaleString();
+                    const vehicleMileage = Number(post.vehicleMileage).toLocaleString();
 
                     // Return UI
                     return (
-                        <div className="col-sm-6 col-md-4 text-white p-2" key={i++}>
+                        <div className="col-md-4 p-2" key={i++}>
+                            
+                            <div className="card shadow-sm border-black">
 
-                            <div className="card shadow-sm">
+                                { /* Imabe */}
+                                <img src={image1} />
 
-                                { /* Image - Start */}
-                                <S3Image level="protected" identityId={userId} imgKey={image1} />
-                                { /* Image - End */}
-                                 
-                                { /* Overlay - Start */}
+                                { /* overlay */}
                                 <div className="card-img-overlay">
 
-                                    { /* Top Overlay */}
+                                    { /* Top overlay */}
                                     <div className="overlay-top">
-                                        <span className="badge badge-primary rounded">
-                                            {postStatus} - {postedOn}
+                                        <span className="bg-white text-dark px-3 py-1 rounded border border-dark">
+                                            Great Deal <i className="fa fa-info-circle" role="img" aria-label="circle"></i>
                                         </span>
-                                    </div>
 
-                                    { /* Bottom Overlay */}
-                                    <div className="overlay-bottom">
-                                        <p className="m-0"><small>{streetCity}, {streetState}</small></p>
-                                        <p className="m-0"><b>${price}</b></p>
-                                    </div>
-
-                                </div> 
-                                { /* Overlay - End */} 
-
-                                { /* Body card - Start */} 
-                                <div className="card-body bg-white text-center">
-                                    <div className="btn-group" style={{ zIndex: "1" }}>  
-
-                                        <Link to={`/postedit/${postId}`} className="btn btn-danger">
-                                            <i className="fa fa-minus-square"></i> Edit
-                                        </Link>  
-
-                                        <Link to={`/view/${postId}`} className="btn btn-info">
-                                            <i className="fa fa-external-link-square"></i> View
-                                        </Link>  
                                     </div>
                                 </div>
-                                { /* Body card - End */} 
+
+                                { /* body */}
+                                <div className="card-body p-0 border-top border-black">
+                                        
+                                    <div className="float-left p-3 w-50">
+                                        <p className="m-0 text-black" style={{ textTransform: "uppercase" }}>
+                                            <b> {vehicleYear} {vehicleMake} {vehicleModal} </b>
+                                        </p>
+                                        <p className="m-0 text-secondary"><small>Standard Range Plus</small></p>
+                                    </div>
+                                    <div className="float-right text-right p-3 w-50">
+                                        <p className="m-0 text-black"><b>${price}</b></p>
+                                        <p className="m-0 text-secondary"><small>{ promotion }</small></p>
+                                    </div>
+                                        
+                                </div>
+                                <div className="card-footer bg-black">
+                                    <div className="float-left text-white"><small>{vehicleMileage} miles</small></div>
+                                    <div className="float-right text-white"><small>Free Shipping <i className="fa fa-motorcycle" role="img" aria-label="circle"></i></small></div>
+                                </div>
 
                             </div>
+
+                            { /* Edit & View Link - Start */}
+                            <div className="border p-2 m-2 rounded">
+                                <a href={`/postedit/${userId}`} className="text-black">Edit</a> | <a href={`/view/${userId}`} className="text-black">View</a>
+                            </div>
+                            { /* Edit & View Link - End */}
 
                         </div>
                     );
@@ -192,7 +217,81 @@ function Posts({ posts, isLoading }) {
                     :
                 // Display while Loading data
                 "Loading"
-            }           
+            }  
+            {/* Posts - End */}
+
+            {/* Dummy Posts - Start */}
+            {
+                dummyPosts.map((post, i) => {
+
+
+                    // Important variables
+                    const { image1 } = post.images;
+                    const { postId, promotion, vehicleModal, vehicleMake, vehicleYear } = post;
+                    // Price
+                    const price = Number(post.vehiclePrice).toLocaleString();
+                    const vehicleMileage = Number(post.vehicleMileage).toLocaleString();
+
+
+                    // Return UI
+                    return (
+                        <div className="col-md-4 p-2" key={i++}> 
+                            <div className="card shadow-sm border-black">
+
+                                { /* Imabe */}
+                                <img src={image1} />
+
+                                { /* overlay */}
+                                <div className="card-img-overlay">
+
+                                    { /* Top overlay */}
+                                    <div className="overlay-top">
+
+                                        <span className="bg-white text-dark px-3 py-1 rounded border border-dark">
+                                            Great Deal <i className="fa fa-info-circle" role="img" aria-label="circle"></i>
+                                        </span>
+
+                                    </div>
+                                </div>
+
+                                { /* body */}
+                                <div className="card-body p-0 border-top border-black">
+
+                                    <div className="float-left p-3 w-50">
+                                        <p className="m-0 text-black" style={{ textTransform: "uppercase" }}>
+                                            <b> {vehicleYear} {vehicleMake} {vehicleModal} </b>
+                                        </p>
+                                        <p className="m-0 text-secondary"><small>Standard Range Plus</small></p>
+                                    </div>
+                                    <div className="float-right text-right p-3 w-50">
+                                        <p className="m-0 text-black"><b>${price}</b></p>
+                                        <p className="m-0 text-secondary"><small>{promotion}</small></p>
+                                    </div>
+
+                                </div>
+
+                                { /* footer */}
+                                <div className="card-footer bg-black">
+                                    <div className="float-left text-white">
+                                        <small>{vehicleMileage} miles</small>
+                                    </div>
+                                    <div className="float-right text-white">
+                                        <small>Free Shipping <i className="fa fa-motorcycle" role="img" aria-label="motorcycle"></i></small>
+                                    </div>
+                                </div>
+
+                            </div> 
+
+                            { /* Edit & View Link - Start */}
+                            <div className="border p-2 m-2 rounded">
+                                <a href={`/postedit/${postId}`} className="text-black">Edit</a> | <a href={`/view/${postId}`} className="text-black">View</a>
+                            </div>
+                            { /* Edit & View Link - End */}
+                        </div>
+                    );
+                })
+            }
+            {/* Dummy Posts - End */} 
         </div>
         );
 } 
